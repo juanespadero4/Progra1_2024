@@ -38,8 +38,8 @@ def utn_personajes_app(diccionario: list[dict]) -> None:
             case 5:
                 utn_calcular_imprimir_promedio_dato (diccionario, "altura")
             case 6:
-                imprimir_dato(identidad_mas_o_menos (diccionario, "maximo", "altura"))
-                imprimir_dato(identidad_mas_o_menos (diccionario, "minimo", "altura"))
+                imprimir_dato(identificar_personaje_mas_o_menos (diccionario, "maximo", "altura"))
+                imprimir_dato(identificar_personaje_mas_o_menos (diccionario, "minimo", "altura"))
             case 7:
                 utn_calcular_imprimir_heroe(diccionario , "maximo", "peso")
                 utn_calcular_imprimir_heroe(diccionario, "minimo", "peso")
@@ -50,20 +50,20 @@ def utn_personajes_app(diccionario: list[dict]) -> None:
                 utn_calcular_imprimir_promedio_dato(diccionario, "poder")
                 mensaje = "-Los siguientes personajes estan por debajo del promedio:"
                 imprimir_dato(mensaje)
-                calcular_debajo_promedio(diccionario,"poder")
+                calcular_personajes_por_debajo_del_promedio(diccionario,"poder")
             case 10:
                 mensaje = f"El largo de la lista es de {len(diccionario)} personajes."
                 imprimir_dato(mensaje)
             case 11:
-                franquicia_personaje(diccionario)
+                contar_personajes_por_franquicia(diccionario, "DC Comics", "Marvel Comics")
             case 12:
-                pass
+                ordenar_personajes_descendente(lista_personajes, "poder")
             case 13:
-                pass
+                ordenar_personajes_ascendente(lista_personajes, "inteligencia")
             case 14:
-                promedio_genero_dato(lista_personajes, "F", "poder")
+                calcular_promedio_dato_genero(lista_personajes, "F", "poder")
             case 15:
-                promedio_genero_dato(lista_personajes, "M", "poder")
+                calcular_promedio_dato_genero(lista_personajes, "M", "poder")
             case 16:
                 break
         limpiar_consola()
