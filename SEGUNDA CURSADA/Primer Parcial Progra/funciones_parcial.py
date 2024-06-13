@@ -1,58 +1,42 @@
 import datetime
+import csv
+
+ruta = 'Progra1_2024\\SEGUNDA CURSADA\\Primer Parcial Progra\\Proyectos.csv'
 id_autoincremental = 0
-lista_proyectos = [
-    {
-        "id": 1,
-        "nombre": "Pepe",
-        "descripcion": "ARGENTO",
-        "fecha_inicio": "2021-02-01",
-        "fecha_finalizacion": "2022-04-05",
-        "presupuesto": 600000,
-        "estado_actual": "Activo"
-    },
-    {
-        "id": 2,
-        "nombre": "Luna",
-        "descripcion": "Proyecto Lunar",
-        "fecha_inicio": "2022-01-15",
-        "fecha_finalizacion": "2023-06-30",
-        "presupuesto": 750000,
-        "estado_actual": "Activo"
-    },
-    {
-        "id": 3,
-        "nombre": "Marte",
-        "descripcion": "Exploracion Marciana",
-        "fecha_inicio": "2021-07-20",
-        "fecha_finalizacion": "2022-12-15",
-        "presupuesto": 800000,
-        "estado_actual": "Activo"
-    },
-    {
-        "id": 4,
-        "nombre": "Solar",
-        "descripcion": "Energía Solar",
-        "fecha_inicio": "2023-03-01",
-        "fecha_finalizacion": "2024-05-20",
-        "presupuesto": 900000,
-        "estado_actual": "Activo"
-    }
-]
 
 
-def incrementar_id():
+def incrementar_id(lista):
     global id_autoincremental
-    id_autoincremental +=1
+    # Encontrar el último ID en la lista de proyectos
+    ultima_id = max(proyecto["id"] for proyecto in lista)
+    # Incrementar el último ID en 1 para el nuevo proyecto
+    id_autoincremental = ultima_id + 1
 
 def decrementar_id():
     global id_autoincremental
     id_autoincremental +=-1
 
 def dividir(divisor, dividendo):
+    """
+    La función dividir calcula la división de un dividendo entre un divisor y devuelve el
+    resultado.
+    
+    El parámetro divisor en la función dividir representa el número por el cual se
+    dividirá el dividendo (el número que se está dividiendo)
+    La función dividir devuelve el resultado de la division.
+    """
     division = dividendo / divisor
     return division
 
 def obtener_nombre_proyecto(mensaje: str):
+    """
+    La función obtener_nombre_proyecto solicita al usuario que ingrese un nombre de proyecto, valida
+    que esté compuesto de caracteres alfabéticos y esté dentro de los 30 caracteres, y devuelve el
+    nombre.
+    
+    El parámetro mensaje en la función es una cadena que
+    representa el mensaje que se mostrará al usuario cuando solicite el nombre del proyecto.
+    """
     while True:
         nombre_proyecto = input(mensaje)
         nombre_proyecto = nombre_proyecto.capitalize()
@@ -62,6 +46,10 @@ def obtener_nombre_proyecto(mensaje: str):
             print("ERROR, ingrese solo caracteres alfabéticos y asegúrese de que no exceda los 30 caracteres.")
 
 def obtener_descripcion():
+    """
+    La función obtener_descripcion solicita al usuario que ingrese una descripción del proyecto, la
+    pone en mayúscula y se asegura de que no tenga más de 200 caracteres antes de devolverla.
+    """
     while True:
         descripcion = input("Ingrese la descripcion del proyecto: ")
         descripcion = descripcion.capitalize()
@@ -71,12 +59,16 @@ def obtener_descripcion():
             print("ERROR, ha pasado los 200 caracteres.")
 
 def validar_presupuesto():
-        while True:
-            presupuesto = int(input("Ingrese el presupuesto del proyecto (no menor a 500000): "))
-            if presupuesto >= 500000:
-                return presupuesto
-            else:
-                print("ERROR, reingrese un presupuesto valido.")
+    """
+    La función "validar_presupuesto" solicita al usuario que ingrese un presupuesto del proyecto mayor o
+    igual a 500.000. Devuelve el entero si cumple con los requisitos.
+    """
+    while True:
+        presupuesto = int(input("Ingrese el presupuesto del proyecto (no menor a 500000): "))
+        if presupuesto >= 500000:
+            return presupuesto
+        else:
+            print("ERROR, reingrese un presupuesto valido.")
 
 def es_bisiesto(año):
     """Verifica si un año es bisiesto."""
@@ -110,7 +102,7 @@ def solicitar_fecha(inicio_o_final: str):
 
             if validar_fecha(dia, mes, año):
                 fecha = datetime.date(año, mes, dia)
-                return fecha.strftime("%Y-%m-%d")
+                return fecha.strftime("%d-%m-%Y")
             else:
                 print("Fecha no válida. Intente nuevamente.")
 
@@ -207,7 +199,7 @@ def baja_proyecto(lista_proyectos: list):
 
 def comprobar_proyectos_finalizados(lista_proyectos):
     """Comprueba y actualiza el estado de los proyectos que han finalizado."""
-    fecha_actual = datetime.date.today().strftime("%Y-%m-%d")
+    fecha_actual = datetime.date.today().strftime("%d-%m-%Y")
     for proyecto in lista_proyectos:
         if proyecto["fecha_finalizacion"] <= fecha_actual and proyecto["estado_actual"] == "Activo":
             proyecto["estado_actual"] = "Finalizado"
@@ -237,7 +229,7 @@ def modificar_proyecto(lista_proyectos):
                 "3) Fecha de inicio\n"
                 "4) Fecha de finalizacion\n"
                 "5) Presupuesto\n"
-                "6) Volver al menu"
+                "6) Volver al menu\n"
                 "Opcion a ingresar: "
             ))
             match menu_modificaciones:
@@ -263,43 +255,78 @@ def modificar_proyecto(lista_proyectos):
                     print("PRESUPUESTO CAMBIADO CON ÉXITO.")
                 case 6:
                     break
-    else:
-        print("No se encontró el proyecto con el ID especificado.")
+        else:
+            print("No se encontró el proyecto con el ID especificado.")
+            break
 
 
-def buscar_proyecto_nombre():
+def buscar_proyecto_nombre(lista):
     nombre_proyecto_a_buscar = obtener_nombre_proyecto("Ingrese el nombre del proyecto a buscar: ")
-    for proyecto in lista_proyectos:
+    for proyecto in lista:
         if nombre_proyecto_a_buscar == proyecto["nombre"]:
             print("Se encontro el proyecto.")
             mostrar_proyecto(proyecto)
+        else:
+            break
+        
+def chequeo_cantidad_activos(lista):
+    cantidad = 0
+    for proyecto in lista:
+        if proyecto["estado_actual"] == "Activo":
+            cantidad +=1
+    if cantidad >= 50:
+        print("No se pueden agregar mas proyectos.")
+        return False
+    else:
+        return True
+    
+def abrir():
+    lista_proyectos = []
+    with open(ruta, mode='r', newline='', encoding='utf-8') as file:
+        lista = csv.DictReader(file)
+        for proyecto_en_csv in lista:
+                proyecto = {
+                    "id": int(proyecto_en_csv["id"]),
+                    "nombre": proyecto_en_csv["Nombre del Proyecto"],
+                    "descripcion": proyecto_en_csv["Descripción"],
+                    "fecha_inicio": proyecto_en_csv["Fecha de inicio"],
+                    "fecha_finalizacion": proyecto_en_csv["Fecha de Fin"],
+                    "presupuesto": int(proyecto_en_csv["Presupuesto"]),
+                    "estado_actual": proyecto_en_csv["Estado"]
+                }
+                lista_proyectos.append(proyecto)
+    return lista_proyectos
+
+    
+def cerrar_csv(file):
+    file.close()
     
 
 #-------------------------------------------------------------------------------------------------------------------
 
-def menu_agregar_proyecto():
+def menu_agregar_proyecto(lista):
     global id_autoincremental
     retorno = False
-    nombre_proyecto = obtener_nombre_proyecto("Ingrese el nombre del proyecto: ")
-    descripcion_proyecto = obtener_descripcion()
-    fecha_inicio = solicitar_fecha("inicio")
-    fecha_final = (solicitar_fecha_final(fecha_inicio))
-    presupuesto_proyecto = validar_presupuesto()
-    estado_actual_proyecto = estado_proyecto()
-    proyecto = {"id": id_autoincremental, 
-                "nombre": nombre_proyecto, 
-                "descripcion": descripcion_proyecto, 
-                "fecha_inicio": fecha_inicio, 
-                "fecha_finalizacion": fecha_final, 
-                "presupuesto": presupuesto_proyecto, 
-                "estado_actual": estado_actual_proyecto
-                }
-    mostrar_proyecto(proyecto)
-    alta_proyecto = confirmar_alta()
-    if alta_proyecto:
-        lista_proyectos.append(proyecto)
-    return lista_proyectos
-
-
+    if chequeo_cantidad_activos(lista):
+        nombre_proyecto = obtener_nombre_proyecto("Ingrese el nombre del proyecto: ")
+        descripcion_proyecto = obtener_descripcion()
+        fecha_inicio = solicitar_fecha("inicio")
+        fecha_final = (solicitar_fecha_final(fecha_inicio))
+        presupuesto_proyecto = validar_presupuesto()
+        estado_actual_proyecto = estado_proyecto()
+        proyecto = {"id": id_autoincremental, 
+                    "nombre": nombre_proyecto, 
+                    "descripcion": descripcion_proyecto, 
+                    "fecha_inicio": fecha_inicio, 
+                    "fecha_finalizacion": fecha_final, 
+                    "presupuesto": presupuesto_proyecto, 
+                    "estado_actual": estado_actual_proyecto
+                    }
+        mostrar_proyecto(proyecto)
+        
+    with open(ruta, 'a', newline='\n', encoding='utf-8') as file:
+                writer = csv.DictWriter(file, fieldnames=proyecto.keys())
+                writer.writerow(proyecto)
+                print("Proyecto dado de alta correctamente.")
 
 
